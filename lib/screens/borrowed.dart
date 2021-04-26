@@ -373,8 +373,12 @@ class AddBorrowedFormState extends State<AddBorrowedForm> {
                             returnDateFieldController.text = date.toString();
                           },
                           validator: (String value) {
-                            return (value.isEmpty || value == null) ?
-                                'Please select a return date' : null;
+                            if (value.isEmpty || value == "null" || value == null) {
+                              returnDateFieldController.text = "";
+                              return 'Please select a return date';
+                            } else {
+                              return null;
+                            }
                           },
                         )),
                         Padding(padding: EdgeInsets.only(top: 40), child: ElevatedButton(

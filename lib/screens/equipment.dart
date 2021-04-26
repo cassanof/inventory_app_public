@@ -150,6 +150,7 @@ class EquipmentScreen extends StatelessWidget {
                             children: [
                               Text("Name: " + equipment.name,),
                               Text("Category: " + equipment.category,),
+                              if(equipment.serial.isNotEmpty) Text("Serial: " + equipment.serial,),
                               Text(
                                   (() {
                                     if(equipment.borrowedBy != null) {
@@ -314,6 +315,7 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
   // Define controllers to access data in fields
   final nameFieldController = TextEditingController();
   final categoryFieldController = TextEditingController();
+  final serialFieldController = TextEditingController();
 
   // Asynchronous function to upload the image to a server
   // this function takes an image, renames it and uploads it to a http POST server
@@ -337,6 +339,7 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
     // Dispose all data in the fields when the Widget gets disposed
     nameFieldController.dispose();
     categoryFieldController.dispose();
+    serialFieldController.dispose();
 
     // also resets the image
     image = null;
@@ -411,6 +414,24 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
                                 : null;
                           },
                         )),
+                        Padding(padding: EdgeInsets.only(top: 20), child: TextFormField(
+                          decoration: const InputDecoration(
+                            icon: Icon(FontAwesomeIcons.barcode),
+                            labelText: 'Serial',
+                            hintText: 'A serial code (optional)',
+                          ),
+                          controller: serialFieldController,
+                          validator: (String value) {
+                            if (value.isNotEmpty) {
+                              return (value.length < 1 || value.length > 30)
+                                  ?
+                              'The serial must be between 1 to 30 characters'
+                                  : null;
+                            } else {
+                              return null;
+                            }
+                          },
+                        )),
                         Padding(
                           padding: EdgeInsets.only(top: 40),
                           child: Row(
@@ -449,6 +470,14 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
 
                                     nameFieldController.text = valueMap["name"];
                                     categoryFieldController.text = valueMap["category"];
+
+                                    try {
+                                      serialFieldController.text = valueMap["serial"];
+                                    } catch (e) {
+                                      print(e);
+                                      serialFieldController.text = "";
+                                    }
+
                                   } catch (e) {
                                     print(e); // print error to console
                                     var snackBar = SnackBar(
@@ -509,6 +538,7 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
                                   print('valid form submitted!');
                                   print('name: ' + nameFieldController.text);
                                   print('category: ' + categoryFieldController.text);
+                                  print('serial: ' + serialFieldController.text);
                                   print('photo: ' + hasImage.toString());
 
                                   // if the image is not null, upload it with identifier
@@ -533,6 +563,7 @@ class AddEquipmentFormState extends State<AddEquipmentForm> {
                                   equipmentDocRef.setData({
                                     nameFieldController.text: {
                                       'category': categoryFieldController.text,
+                                      'serial': serialFieldController.text,
                                       'photo': hasImage,
                                       'borrowedBy': null,
                                       'returnDate': null,

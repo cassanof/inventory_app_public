@@ -22,11 +22,12 @@ class Equipment {
   String name;
   String category;
   String borrowedBy;
+  String serial;
   Timestamp returnDate;
   bool photo;
 
 
-  Equipment(this.photo, this.returnDate, this.borrowedBy, this.category,this.name);
+  Equipment(this.photo, this.returnDate, this.borrowedBy, this.category, this.name, this.serial);
 
   // a factory that returns the equipment data by giving the name
   factory Equipment.fromMap(Map<dynamic, dynamic> map, String name) {
@@ -34,6 +35,7 @@ class Equipment {
     final returnDate = map["returnDate"] as Timestamp;
     final borrowedBy = map["borrowedBy"] as String;
     final category = map["category"] as String;
-    return Equipment(photo, returnDate, borrowedBy, category, name);
+    final serial = map["serial"] as String;
+    return Equipment(photo, returnDate, borrowedBy, category, name, serial);
   }
 }
